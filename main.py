@@ -211,7 +211,7 @@ class TwitchMa(commands.Bot):
     async def reloadconfig_command(self, ctx):
         if self._check_user_access(ctx.author, "owner"):
             logger.debug("Reloading configuration...")
-            cc = Configuration('twitch2ma', __name__)
+            cc = Configuration('twitchma', __name__)
             cc.set_file('./config.yaml')
             self._config = cc
             self._set_log_level()
@@ -244,6 +244,6 @@ class TwitchMa(commands.Bot):
 
 
 if __name__ == "__main__":
-    c = Configuration('twitch2ma', __name__)
+    c = Configuration('twitchma', __name__)
     c.set_file('./config.yaml')
     TwitchMa(c).run()
