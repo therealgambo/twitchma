@@ -149,10 +149,6 @@ class TwitchMa(commands.Bot):
 
     async def event_join(self, user: User):
         command = self._config['commands']['twitch_events']['event_join']['command'].get()
-        logger.debug(user.badges)
-        logger.debug(user.type)
-        logger.debug(user.tags)
-
         # ignore join events from ourself
         if command and not re.match(r"^" + self._config['twitch']['username'].get(), user.name):
             logger.debug(f"User joined: {user.name}, executing command: {command}")
