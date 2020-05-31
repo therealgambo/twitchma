@@ -19,6 +19,13 @@ pipenv install && pipenv shell
 python main.py
 ```
 
+or for the ruthless cowboys...
+
+```
+pip install
+python main.py
+```
+
 # Features
 
 - Access Control
