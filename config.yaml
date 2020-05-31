@@ -22,12 +22,13 @@ grandma:
 
 # bot:
 # command_prefix: <string> Single character identifier to indicate message is a command
-# command_timeout: <integer> Default command interval timeout
+# command_timeout: <integer> Default command interval timeout (in seconds)
 # additional_channels: <[]string> List of additional channels that the bot should join & listen on
 bot:
   command_prefix: "!"
   command_timeout: 30
-  additional_channels: []
+  additional_channels:
+    - "christianjackson512"
 
 commands:
 #  twitch_events:
@@ -41,26 +42,26 @@ commands:
 #      command: <string> user defined GrandMA2 command to execute
   twitch_events:
     event_usernotice_subscription:
-      command: "Go Macro 3"
-    event_part:
-      command: "Off Seq 8"
-    event_join:
       command: "Go Seq 8"
+    event_part:
+      command: "Go Seq 23; Go Seq 4"
+    event_join:
+      command: "Go Seq 22; Go Seq 3"
     event_command_error:
-      command: "Go Macro 2"
+      command: "Go Seq 8; Go Seq 7"
 
 #  keyword_mapping:
 #    mappings:
 #    - word: <string> User defined word that triggers the command
-#      timeout: <integer> Timeout interval between commands, command can be executed once per timeout interval
-#      access: <string> Restrict command access to specific user types: "all|mod|subscriber|turbo|vip"
+#      timeout: <integer> Timeout interval (in seconds) between commands, command can be executed once per timeout interval
+#      access: <string> Restrict command access to specific user types: "all|mod|subscriber|turbo|owner"
 #      command: <string> user defined GrandMA2 command to execute
   keyword_mapping:
     mappings:
     - word: "partymode"
       timeout: 60
       access: "all"
-      command: "Go Macro 1"
+      command: "Go Seq 10"
     - word: "spots"
       timeout: 10
       access: "mod"
@@ -69,3 +70,7 @@ commands:
       timeout: 20
       access: "subscriber"
       command: "Go Seq 4"
+    - word: "seizure"
+      timeout: 0
+      access: "owner"
+      command: "sm 3.1 at 100"

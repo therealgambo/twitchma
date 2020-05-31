@@ -9,7 +9,7 @@ from logzero import logger
 from twitchio.ext import commands
 from twitchio.dataclasses import User, Message, NoticeSubscription
 
-# Uncomment these two lines to enable crazy verbose debug logging
+# Uncomment this line to enable crazy verbose debug logging
 # logging.basicConfig(level=logging.DEBUG)
 
 
@@ -22,7 +22,7 @@ class TwitchMa(commands.Bot):
             client_id=config['twitch']['client_id'].get(),
             nick=config['twitch']['username'].get(),
             prefix=config['bot']['command_prefix'].get(),
-            initial_channels=[config['twitch']['username'].get()] + config['bot']['additional_channels'].get(),
+            initial_channels=list(set([config['twitch']['username'].get()] + config['bot']['additional_channels'].get())),
         )
         self._config = config
         self._set_log_level()
@@ -37,7 +37,7 @@ class TwitchMa(commands.Bot):
         required_access = required_access.lower()
         granted = False
 
-        if user.name == self._config['twitch']['username'].get():
+        if user.name == self._config['twitch']['username'].get() and required_access == "owner":
             granted = True
         if required_access == "all":
             granted = True
@@ -187,7 +187,7 @@ class TwitchMa(commands.Bot):
 
     @commands.command(name='reloadconfig')
     async def reloadconfig_command(self, ctx):
-        if self._check_user_access(ctx.author, ""):
+        if self._check_user_access(ctx.author, "owner"):
             logger.debug("Reloading configuration...")
             cc = Configuration('twitch2ma', __name__)
             cc.set_file('./config.yaml')
