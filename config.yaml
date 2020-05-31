@@ -23,31 +23,41 @@ grandma:
 # bot:
 # command_prefix: <string> Single character identifier to indicate message is a command
 # command_timeout: <integer> Default command interval timeout (in seconds)
+# event_timeout: <integer> Default event interval timeout (in seconds)
 # additional_channels: <[]string> List of additional channels that the bot should join & listen on
 bot:
   command_prefix: "!"
   command_timeout: 30
+  event_timeout: 5
   additional_channels:
     - "christianjackson512"
 
 commands:
 #  twitch_events:
 #    event_usernotice_subscription: Twitch event, user subscribed to channel
+#      timeout: <integer> User defined interval timeout for event type (Rate Limits mass events such as joins/parts)
 #      command: <string> user defined GrandMA2 command to execute
 #    event_part: Twitch chat, user part/left event
+#      timeout: <integer> User defined interval timeout for event type (Rate Limits mass events such as joins/parts)
 #      command: <string> user defined GrandMA2 command to execute
 #    event_join: Twitch chat, user joined event
+#      timeout: <integer> User defined interval timeout for event type (Rate Limits mass events such as joins/parts)
 #      command: <string> user defined GrandMA2 command to execute
 #    event_command_error: Executed when a failed command is received
+#      timeout: <integer> User defined interval timeout for event type (Rate Limits mass events such as joins/parts)
 #      command: <string> user defined GrandMA2 command to execute
   twitch_events:
     event_usernotice_subscription:
+      timeout: 0
       command: "Go Seq 8"
     event_part:
+      timeout: 5
       command: "Go Seq 23; Go Seq 4"
     event_join:
+      timeout: 5
       command: "Go Seq 22; Go Seq 3"
     event_command_error:
+      timeout: 5
       command: "Go Seq 8; Go Seq 7"
 
 #  keyword_mapping:

@@ -29,6 +29,7 @@ class TwitchMa(commands.Bot):
         self._telnet = None
         self._telnet_connect()
         self._rate_limits = {}
+        self._event_rate_limits = {}
 
     def _set_log_level(self):
         logger.setLevel(eval(f"logging.{self._config['twitch']['log_level'].get().upper()}"))
@@ -52,7 +53,27 @@ class TwitchMa(commands.Bot):
             logger.debug(f"   - access granted: {user.name}")
             return True
 
-        logger.debug(f"access denied for user '{user.name}' - does not have required access '{required_access}'")
+        logger.debug(f"   - access denied for user '{user.name}' - does not have required access '{required_access}'")
+        return False
+
+    def _check_event_rate_limit(self, event):
+        if event not in self._event_rate_limits.keys():
+            self._event_rate_limits[event] = -1
+
+        last = self._event_rate_limits[event]
+
+        timeout = self._config['commands']['twitch_events'][event]['timeout'].get()
+        if not timeout:
+            timeout = self._config['bot']['event_timeout'].get()
+
+        now = time.time()
+        if hasattr(time, 'monotonic'):
+            now = time.monotonic()
+
+        diff = (last + timeout) - now
+        if diff < 0:
+            self._event_rate_limits[event] = now
+            return True
         return False
 
     def _check_rate_limit(self, ctx, timeout=None, key=None):
@@ -149,15 +170,16 @@ class TwitchMa(commands.Bot):
 
     async def event_join(self, user: User):
         command = self._config['commands']['twitch_events']['event_join']['command'].get()
+        logger.debug(f"User joined: {user.name}")
         # ignore join events from ourself
-        if command and not re.match(r"^" + self._config['twitch']['username'].get(), user.name):
-            logger.debug(f"User joined: {user.name}, executing command: {command}")
+        if command and not re.match(r"^" + self._config['twitch']['username'].get(), user.name) and \
+                self._check_event_rate_limit('event_join'):
             await self._telnet_send(command)
 
     async def event_part(self, user: User):
         command = self._config['commands']['twitch_events']['event_part']['command'].get()
-        if command:
-            logger.debug(f"User left: {user.name}, executing command: {command}")
+        logger.debug(f"User left: {user.name}")
+        if command and self._check_event_rate_limit('event_part'):
             await self._telnet_send(command)
 
     async def event_message(self, message: Message):
@@ -167,12 +189,12 @@ class TwitchMa(commands.Bot):
         logger.debug(f"User '{ctx.author.name}' entered a bad command: {ctx.message.content}")
         logger.debug(f"Exception message: {error}")
         command = self._config['commands']['twitch_events']['event_command_error']['command'].get()
-        if command:
-            await self._telnet_send(command)
+        if command and self._check_event_rate_limit('event_command_error'):
+            await self._telnet_send(command, ctx)
 
     async def event_usernotice_subscription(self, subscription: NoticeSubscription):
         command = self._config['commands']['twitch_events']['event_usernotice_subscription']['command'].get()
-        if command:
+        if command and self._check_event_rate_limit('event_usernotice_subscription'):
             logger.info(f"New Subscription! User '{subscription.user.name }', plan: {subscription.sub_plan_name}")
             await self._telnet_send(command)
 
