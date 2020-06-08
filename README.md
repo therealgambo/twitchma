@@ -36,3 +36,22 @@ python main.py
  
 - Make commands configurable from `config.yaml` so those without programming experience can create new commands.
 - Dockerfile
+
+# Adding custom commands
+Currently custom commands require you adding them to the `main.py` file under the `COMMANDS SECTION`.
+
+Here are some examples:
+
+```
+    @commands.command(name='blah')
+    async def blah_command(self, ctx):
+        # this command has no rate-limit or access control applied
+        await self._telnet_send('Go Macro 1337', ctx)
+```
+```
+    @commands.command(name='blahblah')
+    async def blah_command(self, ctx):
+        # this command has no rate-limit but restricted with access control
+        if self._check_user_access(ctx.message.author, 'subscriber'):
+            await self._telnet_send('Go Macro 1337', ctx)
+```
