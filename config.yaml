@@ -60,7 +60,7 @@ commands:
       timeout: 5
       command: "Go Seq 8; Go Seq 7"
 
-#  keyword_mapping:
+#  keyword_mapping: # this keyword mapping is used exclusively for the !lb command
 #    mappings:
 #    - word: <string> User defined word that triggers the command
 #      timeout: <integer> Timeout interval (in seconds) between commands, command can be executed once per timeout interval
